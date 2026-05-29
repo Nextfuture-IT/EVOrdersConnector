@@ -1,0 +1,63 @@
+<?php
+/**
+ * Plugin Name:       EV Orders Connector
+ * Plugin URI:        https://github.com/Nextfuture-IT/EVOrdersConnector
+ * Description:       Espone gli ordini WooCommerce (sola lettura) via REST API, in forma normalizzata, autenticata con API key in header. Per integrazione con software NextFuture.
+ * Version:           1.0.0
+ * Author:            NextFuture
+ * Requires at least: 6.0
+ * Requires PHP:      7.4
+ * WC requires at least: 7.0
+ * License:           GPL-2.0-or-later
+ * Text Domain:       evorders
+ *
+ * @package EVOrders
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+define( 'EVORDERS_VERSION', '1.0.0' );
+define( 'EVORDERS_DIR', plugin_dir_path( __FILE__ ) );
+
+require_once EVORDERS_DIR . 'includes/class-evorders-transformer.php';
+require_once EVORDERS_DIR . 'includes/class-evorders-rest.php';
+require_once EVORDERS_DIR . 'includes/class-evorders-settings.php';
+
+/**
+ * Dichiara compatibilità con HPOS (High-Performance Order Storage).
+ */
+add_action(
+	'before_woocommerce_init',
+	static function () {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		}
+	}
+);
+
+/**
+ * Avvio: registra rotte REST e pagina impostazioni. Richiede WooCommerce attivo.
+ */
+add_action(
+	'plugins_loaded',
+	static function () {
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			add_action(
+				'admin_notices',
+				static function () {
+					echo '<div class="notice notice-error"><p><strong>EV Orders Connector</strong> richiede WooCommerce attivo.</p></div>';
+				}
+			);
+
+			return;
+		}
+
+		( new EVOrders_REST() )->register();
+
+		if ( is_admin() ) {
+			( new EVOrders_Settings() )->register();
+		}
+	}
+);

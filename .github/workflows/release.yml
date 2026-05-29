@@ -1,0 +1,30 @@
+name: Build plugin zip
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Lint PHP
+        run: |
+          for f in evorders.php uninstall.php includes/*.php; do
+            php -l "$f"
+          done
+
+      - name: Build evorders.zip
+        run: |
+          mkdir -p build/evorders
+          cp -r evorders.php uninstall.php includes readme.txt README.md build/evorders/
+          cd build && zip -r ../evorders.zip evorders
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: evorders.zip
