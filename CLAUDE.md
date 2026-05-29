@@ -27,6 +27,15 @@ readme.txt / README.md               doc (WP + repo)
 - `GET /wp-json/evorders/v1/health` — pubblico
 - `GET /wp-json/evorders/v1/orders` — protetto, lista filtrabile/paginata
 - `GET /wp-json/evorders/v1/orders/{id}` — protetto, dettaglio
+- `POST /wp-json/evorders/v1/orders/letti` — protetto, ack lettura (body `{ids:[...]}`)
+
+## Consumo incrementale (read-once)
+
+`?nuovi=1` sulla lista filtra gli ordini **senza** il meta `_evorders_letto`
+(meta_query `NOT EXISTS`). Dopo l'elaborazione, `POST /orders/letti {ids:[...]}` marca
+quegli ordini come letti (`$order->update_meta_data('_evorders_letto', gmdate('c'))` +
+`save()`, **HPOS-safe**, idempotente). Crash prima dell'ack → riappaiono (no perdita).
+Flag globale (singolo consumer). Nessuna config lato store.
 
 Filtri lista: `page`, `per_page` (1-100), `status`, `after`/`before`,
 `modified_after`/`modified_before`, `customer`, `search`, `orderby`, `order`,

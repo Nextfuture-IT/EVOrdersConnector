@@ -30,13 +30,15 @@ Namespace `evorders/v1`. Tutte le rotte ordini richiedono l'header `X-Api-Key`.
 | GET | `/wp-json/evorders/v1/health` | no | Health check |
 | GET | `/wp-json/evorders/v1/orders` | sì | Lista ordini (filtri + paginazione) |
 | GET | `/wp-json/evorders/v1/orders/{id}` | sì | Dettaglio ordine |
+| POST | `/wp-json/evorders/v1/orders/letti` | sì | Conferma lettura (ack) degli id elaborati |
 
 ### Filtri lista (query string)
 
 `page`, `per_page` (1-100, default 20), `status`
 (`any`,`pending`,`processing`,`on-hold`,`completed`,`cancelled`,`refunded`,`failed`),
 `after`, `before`, `modified_after`, `modified_before` (date ISO), `customer` (id),
-`search`, `orderby`, `order` (`asc`/`desc`), `include` (CSV id), `exclude` (CSV id).
+`search`, `orderby`, `order` (`asc`/`desc`), `include` (CSV id), `exclude` (CSV id),
+`nuovi` (`1` = solo ordini non ancora letti).
 
 Paginazione nel corpo (`paginazione`) e negli header `X-WP-Total` / `X-WP-TotalPages`.
 
@@ -78,6 +80,29 @@ Risposta lista (estratto):
   ],
   "paginazione": { "totale": 137, "pagine_totali": 7, "pagina": 1, "per_pagina": 20 }
 }
+```
+
+## Consumo incrementale (ogni ordine una sola volta)
+
+Per leggere ogni ordine **una sola volta**, con garanzia di non perdita:
+
+```
+1. GET  /orders?nuovi=1&per_page=100        → solo ordini NON ancora letti
+2. (elabori gli ordini)
+3. POST /orders/letti  body {"ids":[21,22]} → marca letti SOLO quelli confermati
+→ la GET successiva non li restituisce più
+```
+
+- Se il consumer crasha prima del passo 3, gli ordini **riappaiono** alla GET successiva (rilettura sicura).
+- L'ack è **idempotente**: `{ "marcati":[...], "gia_letti":[...], "non_trovati":[...] }`.
+- Lo stato "letto" è un meta interno (`_evorders_letto`), HPOS-safe. **Nessuna configurazione lato store.**
+
+```bash
+# nuovi
+curl -H 'X-Api-Key: CHIAVE' 'https://store.it/wp-json/evorders/v1/orders?nuovi=1&per_page=100'
+# ack
+curl -X POST -H 'X-Api-Key: CHIAVE' -H 'Content-Type: application/json' \
+  -d '{"ids":[21,22]}' https://store.it/wp-json/evorders/v1/orders/letti
 ```
 
 ## Codici di errore

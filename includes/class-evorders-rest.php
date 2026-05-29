@@ -69,7 +69,31 @@ class EVOrders_REST {
 				),
 			)
 		);
+
+		// Conferma lettura (ack): marca come letti gli ordini elaborati,
+		// così con ?nuovi=1 non vengono più restituiti.
+		register_rest_route(
+			self::NS,
+			'/orders/letti',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'conferma_letti' ),
+				'permission_callback' => array( $this, 'autorizza' ),
+				'args'                => array(
+					'ids' => array(
+						'required' => true,
+						'type'     => 'array',
+						'items'    => array( 'type' => 'integer' ),
+					),
+				),
+			)
+		);
 	}
+
+	/**
+	 * Meta key usata per marcare un ordine come già letto/consegnato.
+	 */
+	const META_LETTO = '_evorders_letto';
 
 	/**
 	 * Health check pubblico.
@@ -152,6 +176,16 @@ class EVOrders_REST {
 			$query['exclude'] = $exclude;
 		}
 
+		// Solo ordini non ancora letti (consumo incrementale): assenza del meta "letto".
+		if ( $this->bool( $request->get_param( 'nuovi' ) ) ) {
+			$query['meta_query'] = array(
+				array(
+					'key'     => self::META_LETTO,
+					'compare' => 'NOT EXISTS',
+				),
+			);
+		}
+
 		$risultato = wc_get_orders( $query );
 
 		$dati = array();
@@ -200,6 +234,56 @@ class EVOrders_REST {
 	}
 
 	/**
+	 * Conferma lettura (ack): marca come letti gli ordini elaborati.
+	 * Idempotente: già letti / inesistenti non causano errore. HPOS-safe.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function conferma_letti( WP_REST_Request $request ) {
+		if ( ! function_exists( 'wc_get_order' ) ) {
+			return new WP_Error( 'evorders_no_wc', 'WooCommerce non attivo.', array( 'status' => 500 ) );
+		}
+
+		$ids = array_values( array_filter( array_map( 'intval', (array) $request->get_param( 'ids' ) ) ) );
+
+		if ( empty( $ids ) ) {
+			return new WP_Error( 'evorders_ids_mancanti', 'Nessun id ordine fornito.', array( 'status' => 422 ) );
+		}
+
+		$marcati     = array();
+		$gia_letti   = array();
+		$non_trovati = array();
+
+		foreach ( $ids as $id ) {
+			$order = wc_get_order( $id );
+
+			if ( ! $order instanceof WC_Order ) {
+				$non_trovati[] = $id;
+				continue;
+			}
+
+			if ( '' !== (string) $order->get_meta( self::META_LETTO ) ) {
+				$gia_letti[] = $id;
+				continue;
+			}
+
+			$order->update_meta_data( self::META_LETTO, gmdate( 'c' ) );
+			$order->save();
+			$marcati[] = $id;
+		}
+
+		return new WP_REST_Response(
+			array(
+				'marcati'     => $marcati,
+				'gia_letti'   => $gia_letti,
+				'non_trovati' => $non_trovati,
+			),
+			200
+		);
+	}
+
+	/**
 	 * Definizione args (per validazione/sanitizzazione e doc).
 	 *
 	 * @return array<string,array<string,mixed>>
@@ -219,7 +303,18 @@ class EVOrders_REST {
 			'order'           => array( 'type' => 'string', 'default' => 'desc' ),
 			'include'         => array( 'type' => 'string' ),
 			'exclude'         => array( 'type' => 'string' ),
+			'nuovi'           => array( 'type' => 'boolean', 'default' => false ),
 		);
+	}
+
+	/**
+	 * Interpreta un parametro come booleano (1/true/yes/on).
+	 *
+	 * @param mixed $v
+	 * @return bool
+	 */
+	private function bool( $v ) {
+		return filter_var( $v, FILTER_VALIDATE_BOOLEAN );
 	}
 
 	/**
