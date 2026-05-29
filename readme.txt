@@ -31,9 +31,10 @@ Compatibile con HPOS (High-Performance Order Storage).
 == Installation ==
 
 1. Copia la cartella in wp-content/plugins/evorders/ (o carica lo zip).
-2. Attiva il plugin (richiede WooCommerce).
-3. Definisci EVORDERS_API_KEY in wp-config.php oppure imposta la chiave da
-   WooCommerce > EV Orders API.
+2. Attiva il plugin (richiede WooCommerce). All'attivazione viene generata
+   automaticamente un'API key casuale.
+3. Recupera/rigenera la chiave in WooCommerce > EV Orders API. In alternativa
+   definisci EVORDERS_API_KEY in wp-config.php (ha precedenza).
 
 == Changelog ==
 

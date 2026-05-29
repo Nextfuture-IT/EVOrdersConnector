@@ -37,7 +37,10 @@ Paginazione nel body (`paginazione`) + header `X-WP-Total`/`X-WP-TotalPages`.
 
 Header `X-Api-Key`, confronto `hash_equals` con la chiave configurata:
 costante `EVORDERS_API_KEY` in `wp-config.php` (preferita) **oppure** opzione
-`evorders_api_key` (WooCommerce → EV Orders API). Niente chiave → 500; chiave errata → 401.
+`evorders_api_key`. L'opzione è **generata automaticamente all'attivazione**
+(`register_activation_hook` → `wp_generate_password(64)`, non sovrascrive una chiave
+esistente; saltata se la costante è definita), visibile/rigenerabile in WooCommerce →
+EV Orders API. Niente chiave → 500; chiave errata → 401.
 
 ## Dati
 

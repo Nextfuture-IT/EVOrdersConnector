@@ -10,9 +10,10 @@ consumer key/secret, nessun registry esterno.
 1. Comprimi la cartella del plugin in `evorders.zip` (vedi sotto) oppure copiala in
    `wp-content/plugins/evorders/`.
 2. WordPress → Plugin → attiva **EV Orders Connector** (richiede WooCommerce attivo).
-3. Imposta l'API key (uno dei due):
-   - **wp-config.php** (consigliato): `define( 'EVORDERS_API_KEY', '<stringa-casuale-lunga>' );`
-   - oppure WooCommerce → **EV Orders API** → campo API key.
+   All'attivazione viene **generata automaticamente** un'API key casuale.
+3. Recupera/gestisci l'API key in **WooCommerce → EV Orders API** (mostrata lì, con
+   pulsante "Rigenera"). In alternativa, per tenerla fuori dal DB, definiscila in
+   **wp-config.php** (ha precedenza): `define( 'EVORDERS_API_KEY', '<stringa-casuale-lunga>' );`
 
 Pacchetto installabile:
 

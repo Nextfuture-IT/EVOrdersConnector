@@ -26,6 +26,24 @@ require_once EVORDERS_DIR . 'includes/class-evorders-rest.php';
 require_once EVORDERS_DIR . 'includes/class-evorders-settings.php';
 
 /**
+ * All'attivazione genera un'API key casuale, se non già presente e se non è imposta
+ * dalla costante EVORDERS_API_KEY in wp-config.php. Non sovrascrive una chiave esistente
+ * (riattivazione safe).
+ */
+register_activation_hook(
+	__FILE__,
+	static function () {
+		if ( defined( 'EVORDERS_API_KEY' ) && EVORDERS_API_KEY ) {
+			return;
+		}
+
+		if ( '' === (string) get_option( 'evorders_api_key', '' ) ) {
+			add_option( 'evorders_api_key', wp_generate_password( 64, false, false ) );
+		}
+	}
+);
+
+/**
  * Dichiara compatibilità con HPOS (High-Performance Order Storage).
  */
 add_action(
