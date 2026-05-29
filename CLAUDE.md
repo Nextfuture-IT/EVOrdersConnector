@@ -57,6 +57,12 @@ EV Orders API. Niente chiave → 500; chiave errata → 401.
 date{}, totali{}, cliente{}, fatturazione{}, spedizione{}, righe[], pagamento{}, note`.
 Date in ISO8601 (`WC_DateTime::format('c')`). Esclusi meta/tax/fee/coupon lines.
 
+Ogni voce di `righe[]` include `prodotto_dettaglio` (campi prodotto principali: sku, nome,
+tipo, prezzi listino/scontato/attuale + `in_offerta`, stock, peso/dimensioni, categorie,
+immagine, permalink, descrizione_breve, attributi). Per le varianti: prezzo/sku/attributi
+dalla variante, categorie/immagine/descrizione dal padre. `null` se il prodotto è stato
+eliminato dopo l'ordine.
+
 ## Note
 
 - Compatibile **HPOS** (dichiarata in `before_woocommerce_init`).

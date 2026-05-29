@@ -3,7 +3,7 @@
  * Plugin Name:       EV Orders Connector
  * Plugin URI:        https://github.com/Nextfuture-IT/EVOrdersConnector
  * Description:       Espone gli ordini WooCommerce (sola lettura) via REST API, in forma normalizzata, autenticata con API key in header. Per integrazione con software NextFuture.
- * Version:           1.1.0
+ * Version:           1.2.0
  * Author:            NextFuture
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'EVORDERS_VERSION', '1.1.0' );
+define( 'EVORDERS_VERSION', '1.2.0' );
 define( 'EVORDERS_DIR', plugin_dir_path( __FILE__ ) );
 
 require_once EVORDERS_DIR . 'includes/class-evorders-transformer.php';

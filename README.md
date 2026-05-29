@@ -72,7 +72,19 @@ Risposta lista (estratto):
       "fatturazione": { "citta": "Foggia", "provincia": "FG", "cap": "71100", "paese": "IT" },
       "spedizione": { "citta": "Foggia" },
       "righe": [
-        { "prodotto": "Olio EVO 1L", "sku": "OLIO-1L", "quantita": 2, "prezzo": "19.95", "totale": "39.90" }
+        {
+          "prodotto": "Olio EVO 1L", "sku": "OLIO-1L", "quantita": 2, "prezzo": "19.95", "totale": "39.90",
+          "prodotto_dettaglio": {
+            "id": 55, "sku": "OLIO-1L", "nome": "Olio EVO 1L", "tipo": "simple",
+            "prezzo_attuale": "19.95", "prezzo_listino": "24.90", "prezzo_scontato": "19.95", "in_offerta": true,
+            "stato_stock": "instock", "giacenza": 42, "gestione_stock": true,
+            "peso": "1.2", "dimensioni": { "lunghezza": "", "larghezza": "", "altezza": "" },
+            "categorie": ["Oli", "Bio"], "immagine": "https://store.it/.../olio.jpg",
+            "permalink": "https://store.it/prodotto/olio-evo-1l/",
+            "descrizione_breve": "Olio extravergine 1L",
+            "attributi": { "Formato": ["1L"] }
+          }
+        }
       ],
       "pagamento": { "metodo": "Carta di credito", "metodo_codice": "stripe", "transaction_id": "pi_123" },
       "note": "Lasciare al vicino"

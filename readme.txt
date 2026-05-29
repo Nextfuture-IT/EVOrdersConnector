@@ -5,7 +5,7 @@ Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
 WC requires at least: 7.0
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,9 @@ Compatibile con HPOS (High-Performance Order Storage).
    definisci EVORDERS_API_KEY in wp-config.php (ha precedenza).
 
 == Changelog ==
+
+= 1.2.0 =
+* Ogni riga ordine include prodotto_dettaglio (sku, prezzi listino/scontato/offerta, categorie, immagine, permalink, peso/dimensioni, stock, attributi, descrizione breve). Gestione varianti.
 
 = 1.1.0 =
 * Consumo incrementale: GET /orders?nuovi=1 ritorna solo i non letti; POST /orders/letti (ack) marca come letti (meta _evorders_letto, idempotente, HPOS-safe).
