@@ -1,0 +1,7 @@
+services:
+  connettore-woocommerce:
+    build: .
+    ports:
+      # 8001 è usato da connettore-sw: qui 8002.
+      - "8002:8000"
+    env_file: .env
