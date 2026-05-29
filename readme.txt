@@ -5,7 +5,7 @@ Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
 WC requires at least: 7.0
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,9 @@ Compatibile con HPOS (High-Performance Order Storage).
    definisci EVORDERS_API_KEY in wp-config.php (ha precedenza).
 
 == Changelog ==
+
+= 1.3.1 =
+* Test del canale di auto-update (nessuna modifica funzionale).
 
 = 1.3.0 =
 * Auto-update da GitHub Releases (repo pubblico, nessun token): WordPress mostra l'aggiornamento e lo installa con un click. Header Update URI.
