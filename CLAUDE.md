@@ -19,6 +19,7 @@ includes/
   class-evorders-rest.php            rotte REST evorders/v1 + permission (X-Api-Key)
   class-evorders-transformer.php     WC_Order → DTO normalizzato (chiavi IT)
   class-evorders-settings.php        pagina admin per l'API key (sotto WooCommerce)
+  class-evorders-updater.php         auto-update da GitHub Releases (repo pubblico)
 readme.txt / README.md               doc (WP + repo)
 ```
 
@@ -62,6 +63,14 @@ tipo, prezzi listino/scontato/attuale + `in_offerta`, stock, peso/dimensioni, ca
 immagine, permalink, descrizione_breve, attributi). Per le varianti: prezzo/sku/attributi
 dalla variante, categorie/immagine/descrizione dal padre. `null` se il prodotto è stato
 eliminato dopo l'ordine.
+
+## Auto-update
+
+`EVOrders_Updater` interroga `api.github.com/repos/Nextfuture-IT/EVOrdersConnector/releases/latest`
+(cache transient 6h), confronta col `EVORDERS_VERSION` e, se più recente, inietta l'update in
+`pre_set_site_transient_update_plugins` usando l'asset `evorders.zip` della release. Header
+`Update URI` per evitare conflitti con wordpress.org. **Richiede repo pubblico** (nessun token;
+il codice non contiene segreti). `plugins_api` popola la scheda dettagli/changelog.
 
 ## Note
 

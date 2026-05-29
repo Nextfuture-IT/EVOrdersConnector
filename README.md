@@ -125,6 +125,16 @@ curl -X POST -H 'X-Api-Key: CHIAVE' -H 'Content-Type: application/json' \
 | 404 | Ordine inesistente |
 | 500 | API key non configurata / WooCommerce non attivo |
 
+## Aggiornamenti automatici
+
+Dalla v1.3.0 il plugin si aggiorna da solo dalle **GitHub Releases** (repo pubblico,
+nessun token): quando esce un nuovo tag `vX.Y.Z`, WordPress mostra "Aggiornamento
+disponibile" e lo installa con un click, come un plugin normale. Nessuna configurazione
+lato store. Il check è in cache 6h.
+
+> Richiede che il repo `Nextfuture-IT/EVOrdersConnector` sia **pubblico**. Il codice non
+> contiene segreti (la API key è generata per-store a runtime), quindi è sicuro pubblicarlo.
+
 ## Note tecniche
 
 - Compatibile con **HPOS** (High-Performance Order Storage).
