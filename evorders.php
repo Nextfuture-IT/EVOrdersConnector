@@ -72,6 +72,14 @@ add_action(
 			return;
 		}
 
+		// Self-heal: garantisce un'API key anche dopo un aggiornamento dei file
+		// (register_activation_hook scatta solo all'attivazione). Saltato se è
+		// definita la costante EVORDERS_API_KEY o se la chiave esiste già.
+		if ( ! ( defined( 'EVORDERS_API_KEY' ) && EVORDERS_API_KEY )
+			&& '' === (string) get_option( 'evorders_api_key', '' ) ) {
+			add_option( 'evorders_api_key', wp_generate_password( 64, false, false ) );
+		}
+
 		( new EVOrders_REST() )->register();
 
 		if ( is_admin() ) {
